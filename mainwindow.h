@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 
+
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -20,6 +21,8 @@ private slots:
     void on_pushButton_clicked();
 
     void on_BW_clicked();
+
+    void on_save_clicked();
 
 private:
     Ui::MainWindow *ui;
