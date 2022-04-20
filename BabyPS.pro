@@ -11,9 +11,11 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     mainwindow.cpp
+    Assets/bmplip.cpp
 
 HEADERS += \
     mainwindow.h
+    Assets/bmplip.h
 
 FORMS += \
     mainwindow.ui
