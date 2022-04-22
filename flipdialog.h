@@ -4,24 +4,19 @@
 #include <QDialog>
 
 namespace Ui {
-class flipDialog;
+class FlipDialog;
 }
 
-class flipDialog : public QDialog
+class FlipDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit flipDialog(QWidget *parent = nullptr);
-    ~flipDialog();
-
-private slots:
-    void on_radioButton_3_toggled(bool checked);
-
-    void on_buttonBox_accepted();
+    explicit FlipDialog(QWidget *parent = nullptr);
+    ~FlipDialog();
 
 private:
-    Ui::flipDialog *ui;
+    Ui::FlipDialog *ui;
 };
 
 #endif // FLIPDIALOG_H
