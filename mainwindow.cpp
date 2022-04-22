@@ -7,10 +7,18 @@
 #include <cmath>
 #include "Assets/bmplib.cpp"
 
+
+
 void loadImage(char filename[200]);
 void blackWhite();
+void updateStat();
+void invert();
+void darken();
+void lighten();
+
 
 unsigned char image[SIZE][SIZE][RGB];
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,6 +32,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+QString afterImage = "output/temp.bmp";
+QImage afterImage2;
+bool valid2 = afterImage2.load(afterImage);
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -46,6 +57,7 @@ void MainWindow::on_pushButton_clicked()
                loadImage(nameOfImage);
 
                ui->lbl_image->setPixmap(QPixmap::fromImage(image));
+               ui->after->setPixmap(QPixmap::fromImage(afterImage2));
                ui->label->setText(filename);
            }
            else
@@ -53,6 +65,9 @@ void MainWindow::on_pushButton_clicked()
                //Error Handle
            }
        }
+
+
+
 }
 
 
@@ -110,20 +125,104 @@ void blackWhite()
 
 }
 
+void invert()
+{
+    for (int i = 0; i < SIZE; i++)
+{
+    for (int j = 0; j < SIZE; j++)
+    {
+        for (int k = 0; k < RGB; k++){
+
+        image[i][j][k] = 255 - image[i][j][k];
+        }
+    }
+}
+}
+
+void darken()
+{
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int k =0; k < RGB; k++){
+            image[i][j][k] = image[i][j][k] / 2;
+
+        }
+
+        }
+    }
+}
+
+void lighten()
+{
+    int num = 0;
+    int i, j;
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int k = 0; k < RGB; k++){
+            if ((image[i][j][k] + (image[i][j][k] / 2)) > 255)
+            {
+                image[i][j][k] = 255;
+            }
+            else
+            {
+                image[i][j][k] = image[i][j][k] + (image[i][j][k] / 2);
+            }
+            }
+        }
+    }
+}
+
+
+
 void saveImage()
 {
     char imageFileName[200] = "output/temp.bmp";
     writeRGBBMP(imageFileName, image);
+    bool valid2 = afterImage2.load(afterImage);
 }
+
+
+
 void MainWindow::on_BW_clicked()
 {
     blackWhite();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 
 
 void MainWindow::on_save_clicked()
 {
-    saveImage();
 
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+
+}
+
+void MainWindow::on_invert_btn_clicked()
+{
+    invert();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
+
+
+void MainWindow::on_darken_btn_clicked()
+{
+    darken();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
+
+
+void MainWindow::on_lighten_btn_clicked()
+{
+    lighten();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 

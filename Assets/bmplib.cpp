@@ -2,7 +2,7 @@
 #include <iostream>
 #include <cstdlib>
 #include "bmplib.h"
-#include "unistd.h"
+
 
 using namespace std;
 using std::cout;
@@ -418,26 +418,3 @@ int writeGSBMP(const char* filename, unsigned char outputImage[][SIZE])
 //   ofile.close();
 //   return 0;
 // }
-
-int shows = 0;
-
-void show() {
-  system("eog --single-window /tmp/bmplib.bmp &");
-
-  // wait longer on the first show, OS takes time to start eog
-  //if (shows == 0) sleep(1);
-
-  // generally, wait 0.2 seconds = 200000 milliseconds
-  usleep(200000);
-  shows++;
-}
-
-void showRGBBMP(unsigned char inputImage[][SIZE][RGB]) {
-  writeRGBBMP("/tmp/bmplib.bmp", inputImage);
-  show();
-}
-
-void showGSBMP(unsigned char inputImage[][SIZE]) {
-  writeGSBMP("/tmp/bmplib.bmp", inputImage);
-  show();
-}
