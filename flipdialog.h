@@ -1,27 +1,35 @@
 #ifndef FLIPDIALOG_H
 #define FLIPDIALOG_H
 
+
+
 #include <QDialog>
+#include <mainwindow.h>
+
 
 namespace Ui {
-class flipDialog;
+class FlipDialog;
 }
 
-class flipDialog : public QDialog
+class FlipDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit flipDialog(QWidget *parent = nullptr);
-    ~flipDialog();
+    explicit FlipDialog(QWidget *parent = nullptr);
+    ~FlipDialog();
+    bool data();
+
+
 
 private slots:
-    void on_radioButton_3_toggled(bool checked);
+//    void on_buttonBox_accepted();
 
     void on_buttonBox_accepted();
 
+
 private:
-    Ui::flipDialog *ui;
+    Ui::FlipDialog *ui;
 };
 
 #endif // FLIPDIALOG_H

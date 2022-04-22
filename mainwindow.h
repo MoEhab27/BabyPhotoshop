@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QFileDialog>
+#include <flipdialog.h>
 
 
 QT_BEGIN_NAMESPACE
@@ -16,6 +17,8 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
+    void flip(bool h,bool v);
+    Ui::MainWindow *ui;
 
 private slots:
     void on_pushButton_clicked();
@@ -30,7 +33,11 @@ private slots:
 
     void on_lighten_btn_clicked();
 
+    void on_flip_btn_clicked();
+
+
+
 private:
-    Ui::MainWindow *ui;
+//    Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

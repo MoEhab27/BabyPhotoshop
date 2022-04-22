@@ -195,6 +195,9 @@
     <property name="text">
      <string>Lighten Image</string>
     </property>
+    <property name="flat">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QPushButton" name="rotate_btn">
     <property name="geometry">
@@ -261,17 +264,17 @@
      <string>Black and White</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton_2">
+   <widget class="Line" name="line">
     <property name="geometry">
      <rect>
-      <x>890</x>
-      <y>520</y>
-      <width>89</width>
-      <height>25</height>
+      <x>960</x>
+      <y>510</y>
+      <width>118</width>
+      <height>16</height>
      </rect>
     </property>
-    <property name="text">
-     <string>PushButton</string>
+    <property name="orientation">
+     <enum>Qt::Horizontal</enum>
     </property>
    </widget>
   </widget>

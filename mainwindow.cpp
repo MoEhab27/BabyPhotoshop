@@ -10,6 +10,7 @@
 
 
 void loadImage(char filename[200]);
+void saveImage();
 void blackWhite();
 void updateStat();
 void invert();
@@ -19,6 +20,9 @@ void lighten();
 
 unsigned char image[SIZE][SIZE][RGB];
 
+QString afterImage = "output/temp.bmp";
+QImage afterImage2;
+bool valid2 = afterImage2.load(afterImage);
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -32,9 +36,7 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-QString afterImage = "output/temp.bmp";
-QImage afterImage2;
-bool valid2 = afterImage2.load(afterImage);
+
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -51,10 +53,10 @@ void MainWindow::on_pushButton_clicked()
            {
                for (int i = 0; i < filename.length(); i++)
                {
-                   nameOfImage[i] = name[i];
+//                   nameOfImage[i] = name[i];
                }
            //    image = imaged.scaledToWidth(ui->lbl_image->)
-               loadImage(nameOfImage);
+               loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
 
                ui->lbl_image->setPixmap(QPixmap::fromImage(image));
                ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -177,6 +179,58 @@ void lighten()
 }
 
 
+void MainWindow::flip(bool h,bool v){
+    int x;
+
+   if (v)
+   {
+
+    for(int i=0; i < SIZE; i++)
+    {
+     for(int j=0; j < SIZE/2; j++)
+     {
+         for (int k = 0; k < 3; k++)
+         {
+
+        // to Swap the first pixel with last pixel in the coulmn
+            x = image[i][j][k];
+            image[i][j][k]=image[i][SIZE-1-j][k];
+            image[i][SIZE-1-j][k]= x;
+         }
+
+      }
+    }
+    saveImage();
+     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+   }
+   else if(h)
+   {
+
+   for(int i=0; i < SIZE/2; i++)
+   {
+     for(int j=0; j < SIZE; j++)
+     {
+         for (int k = 0; k < 3; k++)
+         {
+
+   // to Swap the first pixel with last pixel in the coulmn
+            x = image[i][j][k];
+            image[i][j][k]=image[SIZE-1-i][j][k];
+            image[SIZE-1-i][j][k]= x;
+         }
+      }
+    }
+   saveImage();
+   ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+   }
+
+   else //to avoid error
+   {
+     cout<<"unvalid input!";
+   }
+
+}
+
 
 void saveImage()
 {
@@ -185,6 +239,14 @@ void saveImage()
     bool valid2 = afterImage2.load(afterImage);
 }
 
+
+
+
+//void load()
+//{
+//    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+
+//}
 
 
 void MainWindow::on_BW_clicked()
@@ -225,4 +287,15 @@ void MainWindow::on_lighten_btn_clicked()
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
+
+
+void MainWindow::on_flip_btn_clicked()
+{
+    FlipDialog flip;
+    flip.setModal(true);
+    flip.exec();
+}
+
+
+
 
