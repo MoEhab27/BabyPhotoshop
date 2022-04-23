@@ -50,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->enlarge1->hide();
+    ui->enlarge2->hide();
+    ui->enlarge3->hide();
+    ui->enlarge4->hide();
 }
 
 MainWindow::~MainWindow()
@@ -81,7 +85,8 @@ void MainWindow::on_pushButton_clicked()
                 nameOfImage[i] = name[i];
                }
            //    image = imaged.scaledToWidth(ui->lbl_image->)
-               loadImage(nameOfImage);
+//               loadImage(nameOfImage);//////////////////////////////////
+               loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
                for (int i = 0; i < filename.length(); i++)
                {
                    backup[i] = nameOfImage[i];
@@ -425,6 +430,102 @@ void MainWindow::flip(bool h,bool v){
 
 }
 
+//--------------------------
+// Enlarge Filter
+//--------------------------
+
+unsigned char img2[SIZE][SIZE][3] ;//declear new imagr aaray
+int x=0,y=0;
+
+void copyRGBimage(unsigned char img2[SIZE][SIZE][3]){ //function to take a copy from the origianl image
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+        for (int k = 0; k < 3; k++)
+        {
+            img2[i][j][k]=image[i][j][k];
+        }
+        }
+   }
+}
+
+void enlargeFirstQ(){// function for enlarge first Quarter
+    copyRGBimage(img2);
+    for (int i = 0; i < SIZE/2; i++) {
+      for (int j = 0; j< SIZE/2; j++) {
+        for (int k = 0; k < 3; k++)
+        {
+        image[x][y][k] = img2[i][j][k];//take first pixel and assign it to first pixel in image
+        image[x][y+1][k]= img2[i][j][k];//take second on right pixel and assign it to  second on right pixel in image
+        image[x+1][y+1][k]= img2[i][j][k];//take last pixel and assign it to last pixel in image
+        image[x+1][y][k]= img2[i][j][k];//take dwon pixel and assign it to dawon pixel in image
+        }
+        y+=2;
+      }
+      x+=2;
+      y=0;
+    }
+}
+
+void enlargeSecondQ(){// function for enlarge second Quarter
+    copyRGBimage(img2);
+   for (int i = 0; i < SIZE/2; i++) {
+      for (int j = (SIZE/2); j< SIZE; j++) {
+         for (int k = 0; k < 3; k++)
+        {
+        image[x][y][k] = img2[i][j][k];//take first pixel and assign it to first pixel in image
+        image[x][y+1][k]= img2[i][j][k];//take second on right pixel and assign it to  second on right pixel in image
+        image[x+1][y+1][k]= img2[i][j][k];//take last pixel and assign it to last pixel in image
+        image[x+1][y][k]= img2[i][j][k];//take dwon pixel and assign it to dawon pixel in image
+        }
+        y+=2;
+
+      }
+      x+=2;
+      y=0;
+    }
+}
+
+void enlargeThirdQ(){// function for enlarge third Quarter
+    copyRGBimage(img2);
+   for (int i = (SIZE/2); i < SIZE; i++) {
+      for (int j = 0; j< SIZE/2; j++) {
+        for (int k = 0; k < 3; k++)
+        {
+        image[x][y][k] = img2[i][j][k];//take first pixel and assign it to first pixel in image
+        image[x][y+1][k]= img2[i][j][k]; //take second on right pixel and assign it to  second on right pixel in image
+        image[x+1][y+1][k]= img2[i][j][k];//take last pixel and assign it to last pixel in image
+        image[x+1][y][k]= img2[i][j][k];//take dwon pixel and assign it to dawon pixel in image
+        }
+        y+=2;
+      }
+      x+=2;
+      y=0;
+    }
+}
+
+void enlargeFourthQ(){// function for enlarge fourth Quarter
+    copyRGBimage(img2);
+  for (int i = (SIZE/2); i < SIZE; i++) {
+      for (int j = (SIZE/2); j< SIZE; j++) {
+         for (int k = 0; k < 3; k++)
+        {
+        image[x][y][k] = img2[i][j][k];//take first pixel and assign it to first pixel in image
+        image[x][y+1][k]= img2[i][j][k];//take second on right pixel and assign it to  second on right pixel in image
+        image[x+1][y+1][k]= img2[i][j][k];//take last pixel and assign it to last pixel in image
+        image[x+1][y][k]= img2[i][j][k];//take dwon pixel and assign it to dawon pixel in image
+        }
+        y+=2;
+      }
+      x+=2;
+      y=0;
+    }
+}
+
+
+
+
 void saveImage()
 {
     char imageFileName[200] = "output/temp.bmp";
@@ -505,4 +606,57 @@ void MainWindow::on_blur_btn_clicked()
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 
 }
+
+void MainWindow::on_enlarge_btn_clicked()
+{
+    ui->enlarge1->show();
+    ui->enlarge2->show();
+    ui->enlarge3->show();
+    ui->enlarge4->show();
+}
+
+void MainWindow::on_enlarge1_clicked()
+{
+    enlargeFirstQ();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->enlarge1->hide();
+    ui->enlarge2->hide();
+    ui->enlarge3->hide();
+    ui->enlarge4->hide();
+}
+
+void MainWindow::on_enlarge2_clicked()
+{
+    enlargeSecondQ();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->enlarge1->hide();
+    ui->enlarge2->hide();
+    ui->enlarge3->hide();
+    ui->enlarge4->hide();
+}
+
+void MainWindow::on_enlarge3_clicked()
+{
+    enlargeThirdQ();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->enlarge1->hide();
+    ui->enlarge2->hide();
+    ui->enlarge3->hide();
+    ui->enlarge4->hide();
+}
+
+void MainWindow::on_enlarge4_clicked()
+{
+    enlargeFourthQ();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->enlarge1->hide();
+    ui->enlarge2->hide();
+    ui->enlarge3->hide();
+    ui->enlarge4->hide();
+}
+
 
