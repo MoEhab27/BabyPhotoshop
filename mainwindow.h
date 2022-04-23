@@ -39,6 +39,12 @@ private slots:
 
     void on_rotate_btn_clicked();
 
+    void on_clear_btn_clicked();
+
+    void on_detect_btn_clicked();
+
+    void on_blur_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
 

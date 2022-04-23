@@ -7,8 +7,9 @@
 #include <cmath>
 #include "Assets/bmplib.cpp"
 
-
-
+//--------------------------
+//  Functions Declerations
+//--------------------------
 void loadImage(char filename[200]);
 void saveImage();
 void blackWhite();
@@ -16,23 +17,39 @@ void updateStat();
 void invert();
 void darken();
 void lighten();
+void saveBackup();
+void detectEdges();
+void blur();
 
+//--------------------------
+
+
+
+//--------------------------
+// Images and Gllobal Variables
+//--------------------------
 
 unsigned char image[SIZE][SIZE][RGB];
 unsigned char secondImage[SIZE][SIZE][RGB];
-
-
+char backup[200];
 
 QString afterImage = "output/temp.bmp";
 QImage afterImage2;
 bool valid2 = afterImage2.load(afterImage);
+
+QString empty1 = "Assets/empty.png";
+QImage emptyImage;
+bool eImage = emptyImage.load(empty1);
+
+//--------------------------
+//--------------------------
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +58,10 @@ MainWindow::~MainWindow()
 }
 
 
+
+//--------------------------
+// Load Button Function
+//--------------------------
 
 void MainWindow::on_pushButton_clicked()
 {
@@ -53,15 +74,6 @@ void MainWindow::on_pushButton_clicked()
            char nameOfImage[200];
            std::string name = filename.toUtf8().constData();
 
-
-      /*     QImage image2;
-           QString filename2 = "D:/Coding Stuff/qt apps/BabyPS/Assets/bg.jpg";
-           bool valid5 = image2.load(filename2);
-           if (valid){
-           ui->bg->setPixmap(QPixmap::fromImage(image2));
-
-}*/
-
            if (valid)
            {
                for (int i = 0; i < filename.length(); i++)
@@ -70,9 +82,11 @@ void MainWindow::on_pushButton_clicked()
                }
            //    image = imaged.scaledToWidth(ui->lbl_image->)
                loadImage(nameOfImage);
-
+               for (int i = 0; i < filename.length(); i++)
+               {
+                   backup[i] = nameOfImage[i];
+               }
                ui->lbl_image->setPixmap(QPixmap::fromImage(image));
-               ui->after->setPixmap(QPixmap::fromImage(afterImage2));
                ui->label->setText(filename);
            }
            else
@@ -80,10 +94,9 @@ void MainWindow::on_pushButton_clicked()
                //Error Handle
            }
        }
-
-
-
 }
+//--------------------------
+//--------------------------
 
 
 
@@ -91,7 +104,6 @@ void loadImage(char filename[200])
 {
     readRGBBMP(filename, image);
 }
-
 
 void blackWhite()
 {
@@ -189,6 +201,107 @@ void lighten()
             }
         }
     }
+}
+
+void detectEdges()
+{
+    unsigned char gsImage[SIZE][SIZE];
+       int temp;
+
+       for (int i=0; i < SIZE; i++)
+       {
+           for (int j=0; j < SIZE; j++)
+           {
+               for (int k=0; k < RGB; k++)
+               {
+                 temp += image[i][j][k];
+               }
+               temp /= 3;
+               gsImage[i][j] = temp;
+               temp = 0;
+           }
+       }
+
+           for (int i = 0; i < SIZE - 1; i++)
+       {
+           for (int j = 0; j < SIZE - 1; j++)
+           {
+               if ((abs(gsImage[i][j] -gsImage[i][j + 1]) >= 40) || (abs(gsImage[i][j] - gsImage[i + 1][j]) >= 40))
+               {
+                   gsImage[i][j] = 0;
+               }
+               else
+               {
+                   gsImage[i][j] = 255;
+               }
+           }
+       }
+       for (int i = 0; i < SIZE; i++)
+       {
+           for (int j = 0; j < SIZE; j++)
+           {
+               if (gsImage[i][j] == 0)
+                   {
+               for (int k = 0; k < RGB; k++)
+               {
+                   image[i][j][k] = 0;
+               }
+                   }
+               else
+               {
+                   for (int k = 0; k < RGB; k++)
+                   {
+                   image[i][j][k] = 255;
+                   }
+               }
+           }
+       }
+}
+
+void blur()
+{
+    unsigned char space[258][258][3];
+
+            for (int i = 1; i < 258; ++i){
+                for (int j = 1; j < 258; ++j){
+                    for(int k = 0; k < RGB; k++){
+                    space[i][j][k] = image[i-1][j-1][k];
+                }
+                }
+            }
+            for (int i = 1; i < 258; ++i){
+                for (int j = 1; j < 258; ++j){
+                        for (int k = 0; k < RGB; k++){
+                int kernelR, kernelG, kernelB;
+                if(k == 0){
+                kernelR = space[i-1][j-1][k] + space[i-1][j][k] + space[i-1][j+1][k] + space[i][j-1][k] + space[i][j][k] + space[i][j+1][k] + space[i+1][j-1][k] + space[i+1][j][k] + space[i][j+1][k];
+                kernelR /= 9;
+                space[i][j][k] = kernelR;
+
+                }
+                if (k == 1){
+
+                kernelG = space[i-1][j-1][k] + space[i-1][j][k] + space[i-1][j+1][k] + space[i][j-1][k] + space[i][j][k] + space[i][j+1][k] + space[i+1][j-1][k] + space[i+1][j][k] + space[i][j+1][k];
+                kernelG /= 9;
+                space[i][j][k] = kernelG;
+                }
+                if (k == 2){
+
+                kernelB = space[i-1][j-1][k] + space[i-1][j][k] + space[i-1][j+1][k] + space[i][j-1][k] + space[i][j][k] + space[i][j+1][k] + space[i+1][j-1][k] + space[i+1][j][k] + space[i][j+1][k];
+                kernelB /= 9;
+                space[i][j][k] = kernelB;
+
+                }
+                        }
+                }
+            }
+            for (int i = 1; i < 258; ++i){
+                for (int j = 1; j < 258; ++j){
+                    for (int k = 0; k < RGB; k++){
+                     image[i-1][j-1][k] = space[i][j][k];
+                }
+                }
+                }
 }
 
 void MainWindow::rotate(int angle)
@@ -312,7 +425,6 @@ void MainWindow::flip(bool h,bool v){
 
 }
 
-
 void saveImage()
 {
     char imageFileName[200] = "output/temp.bmp";
@@ -320,23 +432,12 @@ void saveImage()
     bool valid2 = afterImage2.load(afterImage);
 }
 
-
-
-
-//void load()
-//{
-//    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
-
-//}
-
-
 void MainWindow::on_BW_clicked()
 {
     blackWhite();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
-
 
 void MainWindow::on_save_clicked()
 {
@@ -353,14 +454,12 @@ void MainWindow::on_invert_btn_clicked()
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 
-
 void MainWindow::on_darken_btn_clicked()
 {
     darken();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
-
 
 void MainWindow::on_lighten_btn_clicked()
 {
@@ -369,24 +468,39 @@ void MainWindow::on_lighten_btn_clicked()
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 
-
 void MainWindow::on_flip_btn_clicked()
 {
-    FlipDialog flip;
+    FlipDialog flip; // Calls The Dialog to open the flip window
     flip.setModal(true);
-    flip.exec();
-    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    flip.exec();     // Stops the app till we get a result from the dialog
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));  // Displays the result in the After window
 }
-
-
-
-
 
 void MainWindow::on_rotate_btn_clicked()
 {
     rotateDialog rotate;
     rotate.setModal(true);
     rotate.exec();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
+
+void MainWindow::on_clear_btn_clicked()
+{
+    ui->after->setPixmap(QPixmap::fromImage(emptyImage));
+    loadImage(backup);
+}
+
+void MainWindow::on_detect_btn_clicked()
+{
+    detectEdges();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
+
+void MainWindow::on_blur_btn_clicked()
+{
+    blur();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 
