@@ -4,7 +4,7 @@
 #include <QMainWindow>
 #include <QFileDialog>
 #include <flipdialog.h>
-
+#include <rotatedialog.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -18,7 +18,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
     void flip(bool h,bool v);
-    Ui::MainWindow *ui;
+    void rotate(int angle);
 
 private slots:
     void on_pushButton_clicked();
@@ -37,7 +37,11 @@ private slots:
 
 
 
+    void on_rotate_btn_clicked();
+
 private:
+    Ui::MainWindow *ui;
+
 //    Ui::MainWindow *ui;
 };
 #endif // MAINWINDOW_H

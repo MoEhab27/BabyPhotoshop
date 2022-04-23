@@ -19,6 +19,9 @@ void lighten();
 
 
 unsigned char image[SIZE][SIZE][RGB];
+unsigned char secondImage[SIZE][SIZE][RGB];
+
+
 
 QString afterImage = "output/temp.bmp";
 QImage afterImage2;
@@ -29,6 +32,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
 }
 
 MainWindow::~MainWindow()
@@ -49,14 +53,23 @@ void MainWindow::on_pushButton_clicked()
            char nameOfImage[200];
            std::string name = filename.toUtf8().constData();
 
+
+      /*     QImage image2;
+           QString filename2 = "D:/Coding Stuff/qt apps/BabyPS/Assets/bg.jpg";
+           bool valid5 = image2.load(filename2);
+           if (valid){
+           ui->bg->setPixmap(QPixmap::fromImage(image2));
+
+}*/
+
            if (valid)
            {
                for (int i = 0; i < filename.length(); i++)
                {
-//                   nameOfImage[i] = name[i];
+                nameOfImage[i] = name[i];
                }
            //    image = imaged.scaledToWidth(ui->lbl_image->)
-               loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
+               loadImage(nameOfImage);
 
                ui->lbl_image->setPixmap(QPixmap::fromImage(image));
                ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -178,11 +191,79 @@ void lighten()
     }
 }
 
+void MainWindow::rotate(int angle)
+{
+
+     if (angle == 90)
+     {
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for (int k =0; k < RGB; k++){
+                 secondImage[255 - j][i][k] = image[i][j][k];
+             }
+         }
+         }
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for (int k = 0; k < RGB; k++){
+                 image[i][j][k] = secondImage[i][j][k];
+             }
+             }
+         }
+     }
+     if (angle == 180)
+     {
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for(int k = 0; k< RGB; k++){
+                 secondImage[255 - i][255 - j][k] = image[i][j][k];
+             }
+             }
+         }
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for(int k = 0; k <RGB; k++){
+                 image[i][j][k] = secondImage[i][j][k];
+             }
+             }
+         }
+     }
+     if (angle == 270)
+     {
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for (int k = 0; k <RGB; k++){
+                 secondImage[255 - j][i][k] = image[i][j][k];
+             }
+             }
+         }
+         for (int i = 0; i < SIZE; ++i)
+         {
+             for (int j = 0; j < SIZE; ++j)
+             {
+                 for (int k = 0; k < RGB; k++){
+                 image[i][j][k] = secondImage[i][j][k];
+             }
+             }
+
+     }
+ }
+}
 
 void MainWindow::flip(bool h,bool v){
     int x;
 
-   if (v)
+   if (h)
    {
 
     for(int i=0; i < SIZE; i++)
@@ -203,7 +284,7 @@ void MainWindow::flip(bool h,bool v){
     saveImage();
      ui->after->setPixmap(QPixmap::fromImage(afterImage2));
    }
-   else if(h)
+   else if(v)
    {
 
    for(int i=0; i < SIZE/2; i++)
@@ -294,8 +375,20 @@ void MainWindow::on_flip_btn_clicked()
     FlipDialog flip;
     flip.setModal(true);
     flip.exec();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 
 
 
+
+
+void MainWindow::on_rotate_btn_clicked()
+{
+    rotateDialog rotate;
+    rotate.setModal(true);
+    rotate.exec();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+
+}
 

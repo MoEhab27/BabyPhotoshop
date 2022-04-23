@@ -11,17 +11,20 @@ CONFIG += c++17
 SOURCES += \
     flipdialog.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    rotatedialog.cpp
     Assets/bmplip.cpp
 
 HEADERS += \
     flipdialog.h \
-    mainwindow.h
+    mainwindow.h \
+    rotatedialog.h
     Assets/bmplip.h
 
 FORMS += \
     flipdialog.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    rotatedialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
