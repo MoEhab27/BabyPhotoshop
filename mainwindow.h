@@ -45,6 +45,16 @@ private slots:
 
     void on_blur_btn_clicked();
 
+    void on_enlarge1_clicked();
+
+    void on_enlarge2_clicked();
+
+    void on_enlarge3_clicked();
+
+    void on_enlarge4_clicked();
+
+    void on_enlarge_btn_clicked();
+
 private:
     Ui::MainWindow *ui;
 
