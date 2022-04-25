@@ -71,6 +71,20 @@ private slots:
 
 
 
+    void on_shuffle_btn_clicked();
+
+    void on_shuffle1_clicked();
+
+    void on_shuffle2_clicked();
+
+    void on_shuffle3_clicked();
+
+    void on_shuffle4_clicked();
+
+    void on_cancelShuffle_clicked();
+
+    void on_applyShuffle_clicked();
+
 private:
     Ui::MainWindow *ui;
 
