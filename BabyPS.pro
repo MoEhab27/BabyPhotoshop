@@ -12,18 +12,21 @@ SOURCES += \
     flipdialog.cpp \
     main.cpp \
     mainwindow.cpp \
+    mirrordialog.cpp \
     rotatedialog.cpp
     Assets/bmplip.cpp
 
 HEADERS += \
     flipdialog.h \
     mainwindow.h \
+    mirrordialog.h \
     rotatedialog.h
     Assets/bmplip.h
 
 FORMS += \
     flipdialog.ui \
     mainwindow.ui \
+    mirrordialog.ui \
     rotatedialog.ui
 
 # Default rules for deployment.

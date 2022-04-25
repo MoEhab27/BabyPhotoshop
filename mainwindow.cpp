@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
 #include <iostream>
 #include <fstream>
 #include <cstring>
@@ -54,6 +53,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+    ui->blurSlider->hide();
+    ui->applyBlur->hide();
+    ui->blurValue->hide();
+
 }
 
 MainWindow::~MainWindow()
@@ -85,11 +88,16 @@ void MainWindow::on_pushButton_clicked()
                 nameOfImage[i] = name[i];
                }
            //    image = imaged.scaledToWidth(ui->lbl_image->)
-//               loadImage(nameOfImage);//////////////////////////////////
-               loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
+               loadImage(nameOfImage);//////////////////////////////////
+            //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
+
                for (int i = 0; i < filename.length(); i++)
                {
                    backup[i] = nameOfImage[i];
+               }
+               for (int i = 0; i < filename.length(); i++)
+               {
+                nameOfImage[i] = ' ';
                }
                ui->lbl_image->setPixmap(QPixmap::fromImage(image));
                ui->label->setText(filename);
@@ -99,6 +107,8 @@ void MainWindow::on_pushButton_clicked()
                //Error Handle
            }
        }
+           ui->after->setPixmap(QPixmap::fromImage(emptyImage));
+          // ui->enlarge_btn->setEnabled(true);
 }
 //--------------------------
 //--------------------------
@@ -108,6 +118,11 @@ void MainWindow::on_pushButton_clicked()
 void loadImage(char filename[200])
 {
     readRGBBMP(filename, image);
+}
+
+void loadAnother(char filename[200], unsigned char image2[SIZE][SIZE][RGB])
+{
+    readRGBBMP(filename, image2);
 }
 
 void blackWhite()
@@ -309,6 +324,89 @@ void blur()
                 }
 }
 
+void merge(unsigned char image2[SIZE][SIZE][RGB])
+{
+
+    for (int i = 0; i < SIZE; i++)
+    {
+        for (int j = 0; j < SIZE; j++)
+        {
+            for (int k = 0; k < RGB; k++)
+            {
+                image[i][j][k] = (image2[i][j][k] + image[i][j][k]) / 2;
+            }
+        }
+    }
+}
+
+void MainWindow::mirrorImage(int side)
+{
+    if (side == 1)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    if (j < 128)
+                    {
+                        image[i][j][k] = image[i][255 - j][k];
+                    }
+                }
+            }
+        }
+    }
+    if (side == 2)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    if (j < 128)
+                    {
+                        image[i][255 - j][k] = image[i][j][k];
+                    }
+                }
+            }
+        }
+    }
+    if (side == 3)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    if (j < 128)
+                    {
+                        image[255 - j][i][k] = image[j][i][k];
+                    }
+                }
+            }
+        }
+    }
+    if (side == 4)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    if (j < 128)
+                    {
+                        image[j][i][k] = image[255 - j][i][k];
+                    }
+                }
+            }
+        }
+    }
+}
+
 void MainWindow::rotate(int angle)
 {
 
@@ -435,7 +533,7 @@ void MainWindow::flip(bool h,bool v){
 //--------------------------
 
 unsigned char img2[SIZE][SIZE][3] ;//declear new imagr aaray
-int x=0,y=0;
+
 
 void copyRGBimage(unsigned char img2[SIZE][SIZE][3]){ //function to take a copy from the origianl image
     for (int i = 0; i < SIZE; i++)
@@ -451,6 +549,7 @@ void copyRGBimage(unsigned char img2[SIZE][SIZE][3]){ //function to take a copy 
 }
 
 void enlargeFirstQ(){// function for enlarge first Quarter
+    int x=0,y=0;
     copyRGBimage(img2);
     for (int i = 0; i < SIZE/2; i++) {
       for (int j = 0; j< SIZE/2; j++) {
@@ -469,6 +568,7 @@ void enlargeFirstQ(){// function for enlarge first Quarter
 }
 
 void enlargeSecondQ(){// function for enlarge second Quarter
+    int x=0,y=0;
     copyRGBimage(img2);
    for (int i = 0; i < SIZE/2; i++) {
       for (int j = (SIZE/2); j< SIZE; j++) {
@@ -488,6 +588,7 @@ void enlargeSecondQ(){// function for enlarge second Quarter
 }
 
 void enlargeThirdQ(){// function for enlarge third Quarter
+    int x=0,y=0;
     copyRGBimage(img2);
    for (int i = (SIZE/2); i < SIZE; i++) {
       for (int j = 0; j< SIZE/2; j++) {
@@ -506,6 +607,7 @@ void enlargeThirdQ(){// function for enlarge third Quarter
 }
 
 void enlargeFourthQ(){// function for enlarge fourth Quarter
+    int x=0,y=0;
     copyRGBimage(img2);
   for (int i = (SIZE/2); i < SIZE; i++) {
       for (int j = (SIZE/2); j< SIZE; j++) {
@@ -523,14 +625,17 @@ void enlargeFourthQ(){// function for enlarge fourth Quarter
     }
 }
 
-
-
-
 void saveImage()
 {
     char imageFileName[200] = "output/temp.bmp";
     writeRGBBMP(imageFileName, image);
     bool valid2 = afterImage2.load(afterImage);
+}
+
+void saveToPath(char filename[200])
+{
+    strcat(filename, ".bmp");
+    writeRGBBMP(filename, image);
 }
 
 void MainWindow::on_BW_clicked()
@@ -543,9 +648,48 @@ void MainWindow::on_BW_clicked()
 void MainWindow::on_save_clicked()
 {
 
-    saveImage();
-    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    QString filePath = QFileDialog::getExistingDirectory(this, "Get Any File");
+    char filename[200];
 
+    std::string name =  filePath.toUtf8().constData();
+    name += '/';
+    name += "test";
+ //   name +="Untitled.bmp";
+    for (int i = 0; i < name.length(); i++)
+    {
+     filename[i] = name[i];
+    }
+    saveToPath(filename);
+
+
+//       if (QString::compare(filename, QString()) != 0 )
+//       {
+//           QImage image;
+//           bool valid = image.load(filename);
+//           char nameOfImage[200];
+//           std::string name = filename.toUtf8().constData();
+
+//           if (valid)
+//           {
+//               for (int i = 0; i < filename.length(); i++)
+//               {
+//                nameOfImage[i] = name[i];
+//               }
+
+
+//           //    image = imaged.scaledToWidth(ui->lbl_image->)
+//               saveToPath(nameOfImage);
+//            //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
+//               for (int i = 0; i < filename.length(); i++)
+//               {
+//                nameOfImage[i] = ' ';
+//               }
+//           }
+//           else
+//           {
+//               //Error Handle
+//           }
+//       }
 }
 
 void MainWindow::on_invert_btn_clicked()
@@ -590,6 +734,8 @@ void MainWindow::on_clear_btn_clicked()
 {
     ui->after->setPixmap(QPixmap::fromImage(emptyImage));
     loadImage(backup);
+   // ui->enlarge_btn->setEnabled(true);
+
 }
 
 void MainWindow::on_detect_btn_clicked()
@@ -601,10 +747,9 @@ void MainWindow::on_detect_btn_clicked()
 
 void MainWindow::on_blur_btn_clicked()
 {
-    blur();
-    saveImage();
-    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
-
+    ui->applyBlur->show();
+    ui->blurSlider->show();
+    ui->blurValue->show();
 }
 
 void MainWindow::on_enlarge_btn_clicked()
@@ -613,6 +758,9 @@ void MainWindow::on_enlarge_btn_clicked()
     ui->enlarge2->show();
     ui->enlarge3->show();
     ui->enlarge4->show();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+
 }
 
 void MainWindow::on_enlarge1_clicked()
@@ -624,6 +772,8 @@ void MainWindow::on_enlarge1_clicked()
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+  //  ui->enlarge_btn->setEnabled(false);
+
 }
 
 void MainWindow::on_enlarge2_clicked()
@@ -635,6 +785,8 @@ void MainWindow::on_enlarge2_clicked()
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+  //  ui->enlarge_btn->setEnabled(false);
+
 }
 
 void MainWindow::on_enlarge3_clicked()
@@ -646,6 +798,8 @@ void MainWindow::on_enlarge3_clicked()
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+   // ui->enlarge_btn->setEnabled(false);
+
 }
 
 void MainWindow::on_enlarge4_clicked()
@@ -657,6 +811,73 @@ void MainWindow::on_enlarge4_clicked()
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+  //  ui->enlarge_btn->setEnabled(false);
+
 }
 
+void MainWindow::on_applyBlur_clicked()
+{
+    double value = ui->blurSlider->value();
+    for (int i =0; i < value; i++)
+    {
+        blur();
+    }
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->applyBlur->hide();
+    ui->blurSlider->hide();
+    ui->blurValue->hide();
+    ui->blurSlider->setValue(0);
+}
+
+void MainWindow::on_blurSlider_valueChanged(int value)
+{
+    ui->blurValue->setText(QString::number(value));
+}
+
+
+void MainWindow::on_merge_btn_clicked()
+{
+    unsigned char image2[SIZE][SIZE][RGB];
+    QString filename = QFileDialog::getOpenFileName(this, tr("Choose"), "", tr("Images (*.bmp)"));
+       if (QString::compare(filename, QString()) != 0 )
+       {
+           QImage image;
+           bool valid = image.load(filename);
+           char nameOfImage[200];
+           std::string name = filename.toUtf8().constData();
+
+           if (valid)
+           {
+               for (int i = 0; i < filename.length(); i++)
+               {
+                nameOfImage[i] = name[i];
+               }
+               loadAnother(nameOfImage, image2);
+               for (int i = 0; i < filename.length(); i++)
+               {
+                nameOfImage[i] = ' ';
+               }
+            //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
+               }
+           else
+           {
+               //Error Handle
+           }
+
+       }
+       merge(image2);
+       saveImage();
+       ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
+
+
+void MainWindow::on_mirror_clicked()
+{
+    mirrorDialog mirror;
+    mirror.setModal(true);
+    mirror.exec();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+}
 

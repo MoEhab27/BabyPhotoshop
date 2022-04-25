@@ -5,6 +5,8 @@
 #include <QFileDialog>
 #include <flipdialog.h>
 #include <rotatedialog.h>
+#include <mirrordialog.h>
+
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -19,6 +21,9 @@ public:
     ~MainWindow();
     void flip(bool h,bool v);
     void rotate(int angle);
+    void mirrorImage(int side);
+    QString aloo;
+
 
 private slots:
     void on_pushButton_clicked();
@@ -54,6 +59,17 @@ private slots:
     void on_enlarge4_clicked();
 
     void on_enlarge_btn_clicked();
+
+    void on_applyBlur_clicked();
+
+
+    void on_blurSlider_valueChanged(int value);
+
+    void on_merge_btn_clicked();
+
+    void on_mirror_clicked();
+
+
 
 private:
     Ui::MainWindow *ui;
