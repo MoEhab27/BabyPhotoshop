@@ -19,6 +19,7 @@ void lighten();
 void saveBackup();
 void detectEdges();
 void blur();
+void Shuffle_Image(int quarter[4]);
 
 //--------------------------
 
@@ -53,9 +54,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->enlarge2->hide();
     ui->enlarge3->hide();
     ui->enlarge4->hide();
+    ui->shuffle1->hide();
+    ui->shuffle2->hide();
+    ui->shuffle3->hide();
+    ui->shuffle4->hide();
     ui->blurSlider->hide();
     ui->applyBlur->hide();
     ui->blurValue->hide();
+    ui->applyShuffle->hide();
+    ui->cancelShuffle->hide();
 
 }
 
@@ -625,6 +632,46 @@ void enlargeFourthQ(){// function for enlarge fourth Quarter
     }
 }
 
+void Shuffle_Image(int quarter[4]){
+    unsigned char shuffle[SIZE][SIZE][3];
+    int q[4][2] = {{0, 0}, {0, 128}, {128, 0}, {128, 128}};
+    int x, y;
+    for (int k = 0; k < 4; k++)
+    {
+        x = q[k][0];
+        y = q[k][1];
+
+        for (int i = q[quarter[k] - 1][0]; i < (128 + q[quarter[k] - 1][0]); i++)
+        {
+
+            for (int j = q[quarter[k] - 1][1]; j < (128 + q[quarter[k] - 1][1]); j++)
+            {
+                for (int z = 0; z < 3; z++)
+                {
+                    shuffle[x][y][z] = image[i][j][z];
+
+                }
+            y++;
+            }
+        x++;
+        y = q[k][1];
+        }
+    }
+    for (int i = 0; i < 256; i++)
+    {
+
+        for (int j = 0; j < 256; j++)
+        {
+            for (int z = 0; z < 3; z++)
+            {
+               image[i][j][z] = shuffle[i][j][z];
+
+            }
+        }
+    }
+
+}
+
 void saveImage()
 {
     char imageFileName[200] = "output/temp.bmp";
@@ -881,3 +928,94 @@ void MainWindow::on_mirror_clicked()
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
 }
 
+
+void MainWindow::on_shuffle_btn_clicked()
+{
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->shuffle1->show();
+    ui->shuffle2->show();
+    ui->shuffle3->show();
+    ui->shuffle4->show();
+    ui->applyShuffle->show();
+    ui->cancelShuffle->show();
+
+}
+
+int i =1;
+int arr[4];
+
+void MainWindow::on_shuffle1_clicked()
+{
+    ui->shuffle1->setText(QString::number(i));
+    arr[0]=i;
+    i++;
+    ui->shuffle1->setEnabled(false);
+
+}
+
+void MainWindow::on_shuffle2_clicked()
+{
+    ui->shuffle2->setText(QString::number(i));
+    arr[1]=i;
+    i++;
+    ui->shuffle2->setEnabled(false);
+}
+
+void MainWindow::on_shuffle3_clicked()
+{
+    ui->shuffle3->setText(QString::number(i));
+    arr[2]=i;
+    i++;
+    ui->shuffle3->setEnabled(false);
+}
+
+void MainWindow::on_shuffle4_clicked()
+{
+    ui->shuffle4->setText(QString::number(i));
+    arr[3]=i;
+    i++;
+    ui->shuffle4->setEnabled(false);
+
+}
+
+
+
+
+
+void MainWindow::on_cancelShuffle_clicked()
+{
+    i=0;
+    ui->shuffle1->hide();
+    ui->shuffle2->hide();
+    ui->shuffle3->hide();
+    ui->shuffle4->hide();
+
+    ui->shuffle4->setEnabled(true);
+    ui->shuffle3->setEnabled(true);
+    ui->shuffle2->setEnabled(true);
+    ui->shuffle1->setEnabled(true);
+
+    ui->shuffle1->setText("");
+    ui->shuffle2->setText("");
+    ui->shuffle3->setText("");
+    ui->shuffle4->setText("");
+
+    ui->applyShuffle->hide();
+    ui->cancelShuffle->hide();
+}
+
+void MainWindow::on_applyShuffle_clicked()
+{
+
+i=0;
+    Shuffle_Image(arr);
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->shuffle1->hide();
+    ui->shuffle2->hide();
+    ui->shuffle3->hide();
+    ui->shuffle4->hide();
+    ui->applyShuffle->hide();
+    ui->cancelShuffle->hide();
+}
