@@ -63,7 +63,7 @@ private slots:
     void on_applyBlur_clicked();
 
 
-    void on_blurSlider_valueChanged(int value);
+ //   void on_blurSlider_valueChanged(int value);
 
     void on_merge_btn_clicked();
 
@@ -84,6 +84,17 @@ private slots:
     void on_cancelShuffle_clicked();
 
     void on_applyShuffle_clicked();
+
+    void on_shrink_clicked();
+
+    void on_cancelShrink_clicked();
+
+    void on_shrinkHalf_clicked();
+
+    void on_shrinkThird_clicked();
+
+    void on_shrinkFourth_clicked();
+
 
 private:
     Ui::MainWindow *ui;

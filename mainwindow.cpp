@@ -20,6 +20,8 @@ void saveBackup();
 void detectEdges();
 void blur();
 void Shuffle_Image(int quarter[4]);
+void shrinkImage(int size);
+
 
 //--------------------------
 
@@ -40,6 +42,7 @@ bool valid2 = afterImage2.load(afterImage);
 QString empty1 = "Assets/empty.png";
 QImage emptyImage;
 bool eImage = emptyImage.load(empty1);
+int counter = 0, counter2 = 1;
 
 //--------------------------
 //--------------------------
@@ -63,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
     ui->blurValue->hide();
     ui->applyShuffle->hide();
     ui->cancelShuffle->hide();
+    ui->shrinkHalf->hide();
+    ui->cancelShrink->hide();
+    ui->shrinkThird->hide();
+    ui->shrinkFourth->hide();
 
 }
 
@@ -232,6 +239,7 @@ void lighten()
 
 void detectEdges()
 {
+
     unsigned char gsImage[SIZE][SIZE];
        int temp;
 
@@ -632,6 +640,112 @@ void enlargeFourthQ(){// function for enlarge fourth Quarter
     }
 }
 
+
+void shrinkImage(int size)
+{
+    if (size == 1)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i / 2][j / 2][k] = image[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = SIZE / 2; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+        for (int i = SIZE / 2; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+    }
+    if (size == 2)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i / 3][j / 3][k] = image[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = SIZE / 3; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+        for (int i = SIZE / 3; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+    }
+    if (size == 3)
+    {
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i / 4][j / 4][k] = image[i][j][k];
+                }
+            }
+        }
+        for (int i = 0; i < SIZE; i++)
+        {
+            for (int j = SIZE / 4; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+        for (int i = SIZE / 4; i < SIZE; i++)
+        {
+            for (int j = 0; j < SIZE; j++)
+            {
+                for (int k = 0; k < RGB; k++)
+                {
+                    image[i][j][k] = 255;
+                }
+            }
+        }
+    }
+}
+
+
+
 void Shuffle_Image(int quarter[4]){
     unsigned char shuffle[SIZE][SIZE][3];
     int q[4][2] = {{0, 0}, {0, 128}, {128, 0}, {128, 128}};
@@ -677,16 +791,18 @@ void saveImage()
     char imageFileName[200] = "output/temp.bmp";
     writeRGBBMP(imageFileName, image);
     bool valid2 = afterImage2.load(afterImage);
+
 }
+
 
 void saveToPath(char filename[200])
 {
-    strcat(filename, ".bmp");
     writeRGBBMP(filename, image);
 }
 
 void MainWindow::on_BW_clicked()
 {
+
     blackWhite();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -694,53 +810,25 @@ void MainWindow::on_BW_clicked()
 
 void MainWindow::on_save_clicked()
 {
+    QString filePath = QFileDialog::getSaveFileName(this, "Get Any File", "Untitled","Images (*.bmp)");
 
-    QString filePath = QFileDialog::getExistingDirectory(this, "Get Any File");
-    char filename[200];
 
     std::string name =  filePath.toUtf8().constData();
-    name += '/';
-    name += "test";
- //   name +="Untitled.bmp";
-    for (int i = 0; i < name.length(); i++)
+    int v = name.length();
+    char* filename = new char[v-1];
+
+    for (int i = 0; i < filePath.length(); i++)
     {
      filename[i] = name[i];
     }
+    ui->label->setText(filePath);
     saveToPath(filename);
-
-
-//       if (QString::compare(filename, QString()) != 0 )
-//       {
-//           QImage image;
-//           bool valid = image.load(filename);
-//           char nameOfImage[200];
-//           std::string name = filename.toUtf8().constData();
-
-//           if (valid)
-//           {
-//               for (int i = 0; i < filename.length(); i++)
-//               {
-//                nameOfImage[i] = name[i];
-//               }
-
-
-//           //    image = imaged.scaledToWidth(ui->lbl_image->)
-//               saveToPath(nameOfImage);
-//            //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
-//               for (int i = 0; i < filename.length(); i++)
-//               {
-//                nameOfImage[i] = ' ';
-//               }
-//           }
-//           else
-//           {
-//               //Error Handle
-//           }
-//       }
+    delete[] filename;
 }
 
 void MainWindow::on_invert_btn_clicked()
 {
+
     invert();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -748,6 +836,7 @@ void MainWindow::on_invert_btn_clicked()
 
 void MainWindow::on_darken_btn_clicked()
 {
+
     darken();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -755,6 +844,7 @@ void MainWindow::on_darken_btn_clicked()
 
 void MainWindow::on_lighten_btn_clicked()
 {
+
     lighten();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -762,6 +852,7 @@ void MainWindow::on_lighten_btn_clicked()
 
 void MainWindow::on_flip_btn_clicked()
 {
+
     FlipDialog flip; // Calls The Dialog to open the flip window
     flip.setModal(true);
     flip.exec();     // Stops the app till we get a result from the dialog
@@ -770,6 +861,7 @@ void MainWindow::on_flip_btn_clicked()
 
 void MainWindow::on_rotate_btn_clicked()
 {
+
     rotateDialog rotate;
     rotate.setModal(true);
     rotate.exec();
@@ -787,6 +879,7 @@ void MainWindow::on_clear_btn_clicked()
 
 void MainWindow::on_detect_btn_clicked()
 {
+
     detectEdges();
     saveImage();
     ui->after->setPixmap(QPixmap::fromImage(afterImage2));
@@ -864,6 +957,7 @@ void MainWindow::on_enlarge4_clicked()
 
 void MainWindow::on_applyBlur_clicked()
 {
+
     double value = ui->blurSlider->value();
     for (int i =0; i < value; i++)
     {
@@ -876,13 +970,13 @@ void MainWindow::on_applyBlur_clicked()
     ui->blurValue->hide();
     ui->blurSlider->setValue(0);
 }
-
+/*
 void MainWindow::on_blurSlider_valueChanged(int value)
 {
     ui->blurValue->setText(QString::number(value));
 }
 
-
+*/
 void MainWindow::on_merge_btn_clicked()
 {
     unsigned char image2[SIZE][SIZE][RGB];
@@ -905,6 +999,7 @@ void MainWindow::on_merge_btn_clicked()
                {
                 nameOfImage[i] = ' ';
                }
+
             //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
                }
            else
@@ -921,6 +1016,7 @@ void MainWindow::on_merge_btn_clicked()
 
 void MainWindow::on_mirror_clicked()
 {
+
     mirrorDialog mirror;
     mirror.setModal(true);
     mirror.exec();
@@ -1008,6 +1104,8 @@ void MainWindow::on_cancelShuffle_clicked()
 void MainWindow::on_applyShuffle_clicked()
 {
 
+
+
 i=0;
     Shuffle_Image(arr);
     saveImage();
@@ -1019,3 +1117,73 @@ i=0;
     ui->applyShuffle->hide();
     ui->cancelShuffle->hide();
 }
+
+
+
+
+
+void MainWindow::on_shrink_clicked()
+{
+    ui->cancelShrink->show();
+    ui->shrinkHalf->show();
+    ui->shrinkThird->show();
+    ui->shrinkFourth->show();
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+
+}
+
+
+void MainWindow::on_cancelShrink_clicked()
+{
+    ui->shrinkHalf->hide();
+    ui->shrinkThird->hide();
+    ui->cancelShrink->hide();
+    ui->shrinkFourth->hide();
+
+
+}
+
+
+void MainWindow::on_shrinkHalf_clicked()
+{
+
+    shrinkImage(1);
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->shrinkHalf->hide();
+    ui->shrinkThird->hide();
+    ui->cancelShrink->hide();
+    ui->shrinkFourth->hide();
+}
+
+
+
+
+void MainWindow::on_shrinkThird_clicked()
+{
+
+    shrinkImage(2);
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->shrinkHalf->hide();
+    ui->shrinkThird->hide();
+    ui->cancelShrink->hide();
+    ui->shrinkFourth->hide();
+}
+
+
+void MainWindow::on_shrinkFourth_clicked()
+{
+
+    shrinkImage(3);
+    saveImage();
+    ui->after->setPixmap(QPixmap::fromImage(afterImage2));
+    ui->shrinkHalf->hide();
+    ui->shrinkThird->hide();
+    ui->shrinkFourth->hide();
+    ui->cancelShrink->hide();
+}
+
+
+
