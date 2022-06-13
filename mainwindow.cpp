@@ -33,9 +33,9 @@ void shrinkImage(int size);
 
 unsigned char image[SIZE][SIZE][RGB];
 unsigned char secondImage[SIZE][SIZE][RGB];
-char backup[200];
+const char * backup;
 
-QString afterImage = "output/temp.bmp";
+QString afterImage = "temp.bmp";
 QImage afterImage2;
 bool valid2 = afterImage2.load(afterImage);
 
@@ -90,30 +90,19 @@ void MainWindow::on_pushButton_clicked()
     QString filename = QFileDialog::getOpenFileName(this, tr("Choose"), "", tr("Images (*.bmp)"));
        if (QString::compare(filename, QString()) != 0 )
        {
-           QImage image;
-           bool valid = image.load(filename);
-           char nameOfImage[200];
-           std::string name = filename.toUtf8().constData();
+           QImage qimage;
+           bool valid = qimage.load(filename);
+
+           std::string fname = filename.toUtf8().constData();
 
            if (valid)
            {
-               for (int i = 0; i < filename.length(); i++)
-               {
-                nameOfImage[i] = name[i];
-               }
-           //    image = imaged.scaledToWidth(ui->lbl_image->)
-               loadImage(nameOfImage);//////////////////////////////////
-            //   loadImage("/home/ahmed/BabyPhotoshop/birds.bmp");
 
-               for (int i = 0; i < filename.length(); i++)
-               {
-                   backup[i] = nameOfImage[i];
-               }
-               for (int i = 0; i < filename.length(); i++)
-               {
-                nameOfImage[i] = ' ';
-               }
-               ui->lbl_image->setPixmap(QPixmap::fromImage(image));
+               readRGBBMP(fname.c_str(), image);
+
+               backup = fname.c_str();
+
+               ui->lbl_image->setPixmap(QPixmap::fromImage(qimage));
                ui->label->setText(filename);
            }
            else
@@ -129,10 +118,7 @@ void MainWindow::on_pushButton_clicked()
 
 
 
-void loadImage(char filename[200])
-{
-    readRGBBMP(filename, image);
-}
+
 
 void loadAnother(char filename[200], unsigned char image2[SIZE][SIZE][RGB])
 {
@@ -788,17 +774,14 @@ void Shuffle_Image(int quarter[4]){
 
 void saveImage()
 {
-    char imageFileName[200] = "output/temp.bmp";
+    char imageFileName[200] = "temp.bmp";
     writeRGBBMP(imageFileName, image);
     bool valid2 = afterImage2.load(afterImage);
 
 }
 
 
-void saveToPath(char filename[200])
-{
-    writeRGBBMP(filename, image);
-}
+
 
 void MainWindow::on_BW_clicked()
 {
@@ -814,16 +797,10 @@ void MainWindow::on_save_clicked()
 
 
     std::string name =  filePath.toUtf8().constData();
-    int v = name.length();
-    char* filename = new char[v-1];
 
-    for (int i = 0; i < filePath.length(); i++)
-    {
-     filename[i] = name[i];
-    }
     ui->label->setText(filePath);
-    saveToPath(filename);
-    delete[] filename;
+    writeRGBBMP(name.c_str(), image);
+
 }
 
 void MainWindow::on_invert_btn_clicked()
@@ -872,8 +849,7 @@ void MainWindow::on_rotate_btn_clicked()
 void MainWindow::on_clear_btn_clicked()
 {
     ui->after->setPixmap(QPixmap::fromImage(emptyImage));
-    loadImage(backup);
-   // ui->enlarge_btn->setEnabled(true);
+     readRGBBMP(backup, image);
 
 }
 
